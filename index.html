@@ -142,9 +142,9 @@
       <p class="text-center mb-4">Learn how to improve your SEO with schema markup and AI content using Templario. This free guide is bilingual (English + Español) and optimized for 2025 AI search engines.</p>
       <div class="row justify-content-center">
         <div class="col-md-6">
-          <form id="seoPdfForm">
+          <form  name="submit-to-google-sheet" id="seoPdfForm" >
             <div class="input-group mb-3">
-              <input type="email" class="form-control" id="pdfEmail" placeholder="Enter your email to get the free PDF" required>
+              <input name="email" type="email" class="form-control" id="pdfEmail" placeholder="Enter your email to get the free PDF" required>
               <button class="btn btn-success" type="submit" id="downloadBtn" disabled>📥 Download PDF</button>
             </div>
             <div id="formMessage" class="text-center small text-success" style="display: none;">✅ Thanks! Your download will start shortly.</div>
@@ -224,6 +224,33 @@
         downloadBtn.disabled = true;
       }, 1000);
     });
+
+    /**CONTACT FORM para enviar a google sheets los datos */
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxfilL6nmSih1fh0ex0_Cc0WZPvBh0CSCzNZLtycEG7aC0nN7GHxykd6sgrxoy-Sqrq/exec'
+  const form = document.forms['submit-to-google-sheet']
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await fetch(scriptURL, {
+        method: 'POST',
+        body: new FormData(form),
+      });
+  
+      if (response.ok) {
+        alert('✅ Formulario enviado con éxito.');
+        form.reset(); // Limpia el formulario después de enviarlo
+      } else {
+        throw new Error(`Error en la respuesta: ${response.statusText}`);
+      }
+    } catch (error) {
+      alert('❌ Ocurrió un error al enviar el formulario. Por favor, inténtalo de nuevo.');
+      console.error('Detalles del error:', error);
+    }
+  });
+  
+
   </script>
 </body>
 </html>
