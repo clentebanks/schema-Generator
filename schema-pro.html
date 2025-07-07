@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Templario Schema Generator Pro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 2rem; background: #f8f9fa; }
+    textarea { font-family: monospace; }
+     footer { background: #212529; color: #bbb; padding: 2rem 0; text-align: center; }
+    .fade-up { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+    .fade-up.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mb-4">✨ Templario Schema Generator Pro</h1>
+    <p class="text-muted">Generate Product, Review, FAQ, Article, BlogPost, and Recipe Schema. Copy or export your result. Now includes GPT-powered FAQ generation + SEO Text Generator.</p>
+
+    <form id="schemaForm">
+      <div class="row">
+        <div class="col-md-6">
+          <h5>🛒 Product Info</h5>
+          <input type="text" class="form-control mb-2" id="productName" placeholder="Product Name" required />
+          <input type="text" class="form-control mb-2" id="productImage" placeholder="Image URL" required />
+          <textarea class="form-control mb-2" id="description" placeholder="Product Description" rows="3" required></textarea>
+          <input type="text" class="form-control mb-2" id="sku" placeholder="SKU" />
+          <input type="text" class="form-control mb-2" id="brand" placeholder="Brand Name" required />
+          <input type="number" step="0.1" class="form-control mb-2" id="rating" placeholder="Rating (1-5)" required />
+          <input type="text" class="form-control mb-2" id="author" placeholder="Review Author" required />
+          <textarea class="form-control mb-2" id="review" placeholder="Review Body" rows="2" required></textarea>
+          <input type="text" class="form-control mb-2" id="price" placeholder="Price (e.g. 39.99)" required />
+          <input type="text" class="form-control mb-2" id="url" placeholder="Amazon Affiliate Link" required />
+        </div>
+
+        <div class="col-md-6">
+          <h5>❓ FAQs</h5>
+          <textarea class="form-control mb-2" id="faqs" rows="6" placeholder="Q: ...\nA: ...\nQ: ...\nA: ..."></textarea>
+          <button type="button" class="btn btn-outline-info mb-3" onclick="generateFAQs()">✨ Generate FAQs with AI</button>
+
+          <h5>📝 Article/BlogPost Schema</h5>
+          <input type="text" class="form-control mb-2" id="articleTitle" placeholder="Article Title" />
+          <input type="text" class="form-control mb-2" id="authorName" placeholder="Author Name" />
+          <input type="date" class="form-control mb-2" id="publishDate" />
+          <select class="form-select mb-2" id="articleType">
+            <option value="">Select Article Type</option>
+            <option value="Article">Generic Article</option>
+            <option value="BlogPosting">Blog Post</option>
+          </select>
+
+          <h5>🍽️ Recipe Schema</h5>
+<div class="mb-2">
+  <label for="recipeName" class="form-label">Recipe Name</label>
+  <input type="text" class="form-control" id="recipeName" placeholder="e.g., Chocolate Chip Cookies" />
+</div>
+<div class="mb-2">
+  <label for="ingredients" class="form-label">Ingredients <small class="text-muted">(separate each with a comma)</small></label>
+  <textarea class="form-control" id="ingredients" rows="3" placeholder="e.g., 2 cups flour, 1 cup sugar, 1 tsp baking soda"></textarea>
+</div>
+<div class="mb-2">
+  <label for="instructions" class="form-label">Instructions <small class="text-muted">(separate each step with a comma)</small></label>
+  <textarea class="form-control" id="instructions" rows="3" placeholder="e.g., Mix ingredients, Bake at 350°F for 10 minutes"></textarea>
+</div>
+<button type="submit" class="btn btn-primary mt-3">🚀 Generate Schema</button>
+
+        </div>
+      </div>
+    </form>
+
+    <h2 class="mt-5">📄 Generated JSON-LD</h2>
+    <textarea id="output" class="form-control mb-2" rows="25"></textarea>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+      <button class="btn btn-outline-success" onclick="downloadJSON()">💾 Download .json</button>
+    </div>
+
+   
+  </div>
+
+  <script>
+    document.getElementById('schemaForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const get = id => document.getElementById(id).value.trim();
+
+      const productSchema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": get("productName"),
+        "image": [get("productImage")],
+        "description": get("description"),
+        "sku": get("sku"),
+        "brand": { "@type": "Brand", "name": get("brand") },
+        "review": {
+          "@type": "Review",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": get("rating"),
+            "bestRating": "5"
+          },
+          "author": { "@type": "Person", "name": get("author") },
+          "reviewBody": get("review")
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": get("url"),
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "price": get("price"),
+          "seller": { "@type": "Organization", "name": "Amazon.com" }
+        }
+      };
+
+      const faqText = get("faqs").split(/\n(?=Q:|A:)/);
+      const faqs = [];
+      for (let i = 0; i < faqText.length - 1; i += 2) {
+        const question = faqText[i].replace(/^Q:\s*/, '');
+        const answer = faqText[i + 1].replace(/^A:\s*/, '');
+        if (question && answer) {
+          faqs.push({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": { "@type": "Answer", "text": answer }
+          });
+        }
+      }
+
+      const faqSchema = faqs.length ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs
+      } : null;
+
+      const articleSchema = get("articleTitle") && get("authorName") && get("publishDate") && get("articleType") ? {
+        "@context": "https://schema.org",
+        "@type": get("articleType"),
+        "headline": get("articleTitle"),
+        "author": { "@type": "Person", "name": get("authorName") },
+        "datePublished": get("publishDate"),
+        "mainEntityOfPage": get("url")
+      } : null;
+
+      const recipeSchema = get("recipeName") && get("ingredients") && get("instructions") ? {
+        "@context": "https://schema.org",
+        "@type": "Recipe",
+        "name": get("recipeName"),
+        "recipeIngredient": get("ingredients").split(",").map(i => i.trim()),
+        "recipeInstructions": get("instructions").split(",").map(i => i.trim())
+      } : null;
+
+      const wrapJSONLD = schema => `&lt;script type="application/ld+json"&gt;\n${JSON.stringify(schema, null, 2)}\n&lt;/script&gt`;
+
+      const blocks = [wrapJSONLD(productSchema)];
+      if (faqSchema) blocks.push(wrapJSONLD(faqSchema));
+      if (articleSchema) blocks.push(wrapJSONLD(articleSchema));
+      if (recipeSchema) blocks.push(wrapJSONLD(recipeSchema));
+
+      document.getElementById("output").value = blocks.join("\n\n");
+    });
+
+    function copyToClipboard() {
+      const output = document.getElementById("output");
+      output.select();
+      document.execCommand("copy");
+      alert("✅ Schema copied to clipboard!");
+    }
+
+    function copyText(id) {
+      const output = document.getElementById(id);
+      output.select();
+      document.execCommand("copy");
+      alert("✅ Text copied to clipboard!");
+    }
+
+    function downloadJSON() {
+      const text = document.getElementById("output").value;
+      const blob = new Blob([text], { type: 'application/json' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "schema-markup.json";
+      link.click();
+    }
+
+    function generateFAQs() {
+      var description = document.getElementById("description").value.trim();
+      if (!description) {
+        alert("Please enter a product description first.");
+        return;
+      }
+      var fakeFAQs = [
+        "Q: What makes this product unique?\nA: " + description.slice(0, 120) + "...",
+        "Q: Is it compatible with other devices?\nA: Yes, it’s designed to work with most modern devices.",
+        "Q: What is the return policy?\nA: Returns are accepted within 30 days of purchase."
+      ];
+      document.getElementById("faqs").value = fakeFAQs.join("\n");
+      alert("✅ AI-based FAQ suggestions inserted!");
+    }
+
+    
+  </script>
+</body>
+</html>

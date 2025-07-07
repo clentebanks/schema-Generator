@@ -1,0 +1,99 @@
+<!-- schema-free.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Templario Schema Generator – Free</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { padding: 2rem; background-color: #f9f9f9; font-family: 'Segoe UI', sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-primary">🔧 Templario Schema Generator <span class="badge bg-secondary">Free</span></h1>
+    <p class="text-muted">Use this free version to generate basic Product schema. Upgrade for more!</p>
+
+    <form id="basicSchemaForm">
+      <input type="text" class="form-control mb-2" id="productName" placeholder="Product Name" required />
+      <textarea class="form-control mb-2" id="description" placeholder="Short Description" required></textarea>
+      <input type="text" class="form-control mb-2" id="price" placeholder="Price (e.g. 29.99)" required />
+      <input type="text" class="form-control mb-2" id="url" placeholder="Product URL" required />
+      <button type="submit" class="btn btn-primary">Generate</button>
+    </form>
+
+    <h3 class="mt-4">Output</h3>
+    <textarea id="output" class="form-control mb-3" rows="10" readonly></textarea>
+
+    <div class="alert alert-warning">
+      🚀 Want to add Reviews, FAQs, Articles, Recipes, or Download JSON? <br>
+      
+    </div>
+      <section class="container py-5">
+  <h1 class="text-center mb-4">✨ Unlock Templario Schema Generator Pro</h1>
+  <p class="text-center">Boost your SEO with structured data. Save time, rank better in AI search!</p>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <table class="table table-bordered text-center">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Free</th>
+            <th class="table-success">Pro</th>
+            <th class="table-primary">Bundle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Product Schema</td><td>✔️</td><td>✔️</td><td>✔️</td></tr>
+          <tr><td>Review Schema</td><td>❌</td><td>✔️</td><td>✔️</td></tr>
+          <tr><td>FAQ Schema</td><td>❌</td><td>✔️</td><td>✔️</td></tr>
+          <tr><td>Recipe & Blog Schema</td><td>❌</td><td>✔️</td><td>✔️</td></tr>
+          <tr><td>Copy / Export JSON</td><td>❌</td><td>✔️</td><td>✔️</td></tr>
+          <tr><td>GPT-Powered FAQ</td><td>❌</td><td>✔️</td><td>✔️</td></tr>
+          <tr><td>📘 SEO-Optimized Templates</td><td>❌</td><td>❌</td><td>✔️</td></tr>
+          <tr><td>📜 Commercial License + README</td><td>❌</td><td>❌</td><td>✔️</td></tr>
+          <tr><td>🔮 LLM SEO Text Generator</td><td>❌</td><td>❌</td><td>✔️</td></tr>
+        </tbody>
+      </table>
+
+      <div class="text-center mt-4">
+        <a href="schema-pro.html" class="btn btn-success btn-lg me-2">🎯 Get Pro Now – $7</a>
+        <a href="https://templario.shop" target="_blank" class="btn btn-primary btn-lg">📦 Get Bundle – $15</a>
+        <p class="text-muted mt-2">One-time payment • Instant access • Use forever</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </div>
+
+  <script>
+    document.getElementById('basicSchemaForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('productName').value.trim();
+      const desc = document.getElementById('description').value.trim();
+      const price = document.getElementById('price').value.trim();
+      const url = document.getElementById('url').value.trim();
+
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": name,
+        "description": desc,
+        "offers": {
+          "@type": "Offer",
+          "price": price,
+          "priceCurrency": "USD",
+          "url": url,
+          "availability": "https://schema.org/InStock"
+        }
+      };
+      document.getElementById('output').value = JSON.stringify(schema, null, 2);
+    });
+  </script>
+</body>
+</html>
+
+
